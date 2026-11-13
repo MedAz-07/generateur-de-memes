@@ -1,0 +1,19 @@
+{
+  "name": "generateur-de-memes",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Generateur de memes 100% frontend - mini-projet d'admission SUPINFO",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "vite": "^5.4.10"
+  }
+}
