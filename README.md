@@ -2,7 +2,7 @@
 
 Application web sans serveur : on importe une image, on ajoute du texte, on voit le résultat en direct, on télécharge ou partage, et on retrouve ses créations dans une galerie persistante.
 
-> Lien public du site : [https://generateur-de-memes-1.vercel.app/](https://generateur-de-memes-rouge.vercel.app/)
+> Lien public du site : https://generateur-de-memes-1.vercel.app/
 
 ---
 

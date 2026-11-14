@@ -345,6 +345,8 @@ On avance **phase par phase**, dans l'ordre. À la fin de chaque phase : démo c
 | 14/11/2026 | v1.5 — déploiement Vercel réalisé par l'utilisateur : URL publique renseignée ; recette effectuée sur le domaine public (HTTPS, canvas, LocalStorage, persistance après rechargement, 0 erreur console)                      | Le suffixe `-rouge` est ajouté par Vercel car `generateur-de-memes.vercel.app` appartient à un autre compte ; le nom court n'est donc pas revendiquable |
 | 14/11/2026 | v1.6 — retrait des sections de contexte externe et des mentions nominatives dans les documents ; PRD, phases, checklist et recette conservés                                                                                 | Demande de l'utilisateur : recentrer le cadrage sur le produit                                                                                          |
 
+| 14/11/2026 | v1.7 — lien public du README corrigé : `https://generateur-de-memes-1.vercel.app/` | Le projet a été recréé sous un nouveau nom ; l'ancienne adresse n'est plus attribuée |
+
 ### Avancement
 
 | Phase               | Statut  | Résultat                                                                                         |
