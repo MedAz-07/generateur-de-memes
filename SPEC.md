@@ -1,8 +1,7 @@
 # SPEC.md — Générateur de mèmes
 
-> Mini-projet d'admission B.Eng.3 / M.Eng.1 (SUPINFO)
-> **Document de cadrage : PRD + découpage en phases** — version 1.0 — 13/11/2026
-> Statut : à valider avant de démarrer le code (Phase 1).
+> **Document de cadrage : PRD + découpage en phases** — version 1.6 — 14/11/2026  
+> Statut : document de référence, projet terminé.
 
 ---
 
@@ -10,11 +9,11 @@
 
 ### 0.1 Source
 
-Le sujet (PDF « Mini-projet d'admission B.Eng.3/M.Eng.1 : Générateur de mèmes ») demande :
+Le cahier des charges demande :
 
 > « Développer un générateur de mèmes en ligne où les utilisateurs peuvent télécharger des images, ajouter du texte, et créer rapidement des mèmes. Application doit permettre de visualiser, télécharger et partager les mèmes créés. »
 
-Fonctionnalités imposées par le PDF :
+Fonctionnalités demandées :
 
 1. **Téléchargement d'images** : depuis l'ordinateur de l'utilisateur.
 2. **Ajout de texte** : texte personnalisé sur l'image.
@@ -22,33 +21,21 @@ Fonctionnalités imposées par le PDF :
 4. **Téléchargement et partage** : télécharger les mèmes créés et les partager sur les réseaux sociaux.
 5. **Galerie** : section pour visualiser les mèmes précédemment créés.
 
-Le PDF contient également une note de **propriété intellectuelle / autorisation d'usage** : à respecter (voir §1.7 et §6).
+Le cahier des charges contient également une note de **propriété intellectuelle / autorisation d'usage** : à respecter (voir §1.7 et §6).
 
-### 0.2 Objectif réel du livrable
+Le livrable attendu est une URL publique, ouvrable depuis n'importe quel navigateur ou téléphone, avec les cinq fonctionnalités opérationnelles et un code que son auteur peut expliquer lui-même.
 
-L'email d'admission demande d'**ajouter le lien du site** une fois le projet terminé, et de l'envoyer à **Reda**. Le résultat attendu n'est donc pas seulement « ça marche en local », mais :
+### 0.2 Contraintes retenues
 
-> **Une URL publique, ouvrable depuis n'importe quel navigateur / téléphone, avec les 5 fonctionnalités qui tournent, et un code que je peux expliquer moi-même.**
-
-### 0.3 Ce que dit l'échange avec ChatGPT (et qu'on retient)
-
-- Pas de **Backend**, ni base de données serveur, ni **Authentification** exigés par le PDF.
-- Stack possible : React.js + JavaScript + HTML Canvas + IndexedDB **ou** LocalStorage.
-- Déploiement gratuit sur Vercel.
-- Point de vigilance : la **Galerie doit rester après un refresh** (images sauvegardées localement).
-- Autre exigence implicite mais importante : **être capable d'expliquer son code** → privilégier la simplicité et peu de dépendances.
-
-### 0.4 Contraintes retenues
-
-| # | Contrainte |
-|---|---|
-| C1 | 100 % Frontend, **aucune** donnée envoyée à un serveur, aucune image uploadée en ligne |
-| C2 | Aucun compte, aucune authentification, aucun backend, aucun coût d'hébergement |
-| C3 | Persistance locale de la galerie après F5 / fermeture d'onglet |
-| C4 | Code lisible, commenté, peu de dépendances, **explicable à l'oral** |
-| C5 | Cible : Chrome / Edge / Firefox / Safari, desktop + mobile récents |
+| #  | Contrainte                                                                                     |
+| -- | ---------------------------------------------------------------------------------------------- |
+| C1 | 100 % Frontend, **aucune** donnée envoyée à un serveur, aucune image uploadée en ligne         |
+| C2 | Aucun compte, aucune authentification, aucun backend, aucun coût d'hébergement                 |
+| C3 | Persistance locale de la galerie après F5 / fermeture d'onglet                                 |
+| C4 | Code lisible, commenté, peu de dépendances, **explicable à l'oral**                            |
+| C5 | Cible : Chrome / Edge / Firefox / Safari, desktop + mobile récents                             |
 | C6 | HTTPS obligatoire en prod (requis par Web Share API et Clipboard API → fourni par l'hébergeur) |
-| C7 | Respect de la note de propriété intellectuelle du sujet |
+| C7 | Respect de la note de propriété intellectuelle du sujet                                        |
 
 ---
 
@@ -60,7 +47,7 @@ Un outil web unique, immédiat, sans inscription : je choisis une image de mon P
 
 ### 1.2 Utilisateur cible
 
-Un étudiant / recruteur qui ouvre le lien depuis un email, sur desktop ou mobile, et qui veut créer un mème en moins de 30 secondes sans tutoriel.
+Un utilisateur qui ouvre le lien sur desktop ou mobile et veut créer un mème en moins de 30 secondes, sans tutoriel ni inscription.
 
 ### 1.3 Dans le périmètre (In scope)
 
@@ -83,14 +70,14 @@ Un étudiant / recruteur qui ouvre le lien depuis un email, sur desktop ou mobil
 
 ### 1.5 Exigences fonctionnelles (FR)
 
-| ID | Exigence (source) | Critère d'acceptation | Phase |
-|---|---|---|---|
-| **FR-01** | Téléchargement d'images (PDF §1) | Sélecteur de fichier **et** drag & drop ; `image/jpeg`, `png`, `webp` acceptés ; limite 10 Mo ; message d'erreur clair si type/taille invalide ; l'image est chargée depuis un `File`/`Blob` local, jamais depuis une URL distante | P2 |
-| **FR-02** | Ajout de texte (PDF §2) | 2 blocs par défaut (haut / bas) ; ajout et suppression de blocs ; saisie multiligne ; police, taille, couleur, couleur de contour, gras, alignement, retour à la ligne automatique ; déplacement à la souris/tactile ou champs X/Y | P3 |
-| **FR-03** | Aperçu en temps réel (PDF §3) | Chaque frappe / changement de style redessine le canvas sans bouton « Appliquer » ; rendu < 100 ms ; le preview est mis à l'échelle, l'export utilise la **même** fonction de dessin en pleine résolution | P2 → P3 |
-| **FR-04** | Téléchargement et partage (PDF §4) | Bouton « Télécharger » → PNG (ou JPEG) en résolution native plafonnée à 1600 px, nom `meme-AAAA-MM-JJ-HHmm.png` ; bouton « Partager » → Web Share API avec fichier quand disponible, sinon repli : copie dans le presse-papiers → intents réseaux sociaux (lien du site + texte) → téléchargement + consigne ; un texte court explique la limite du partage sans backend | P4 |
-| **FR-05** | Galerie (PDF §5) | Grille des mèmes du plus récent au plus ancien : miniature, titre, date ; actions *voir / télécharger / ré-éditer / supprimer* (avec confirmation) ; **les mèmes sont toujours présents après F5 et après fermeture/réouverture de l'onglet** ; état vide avec appel à l'action | P5 |
-| **FR-06** | Ergonomie transverse (ajout) | Responsive desktop/mobile ; états vide / chargement / erreur ; labels accessibles, navigation clavier, `alt` sur les miniatures ; aucune donnée externe chargée | P1 → P6 |
+| ID        | Exigence (source)                  | Critère d'acceptation                                                                                                                                                                                                                                                                                                                                                    | Phase   |
+| --------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------- |
+| **FR-01** | Téléchargement d'images (PDF §1)   | Sélecteur de fichier **et** drag & drop ; `image/jpeg`, `png`, `webp` acceptés ; limite 10 Mo ; message d'erreur clair si type/taille invalide ; l'image est chargée depuis un `File`/`Blob` local, jamais depuis une URL distante                                                                                                                                       | P2      |
+| **FR-02** | Ajout de texte (PDF §2)            | 2 blocs par défaut (haut / bas) ; ajout et suppression de blocs ; saisie multiligne ; police, taille, couleur, couleur de contour, gras, alignement, retour à la ligne automatique ; déplacement à la souris/tactile ou champs X/Y                                                                                                                                       | P3      |
+| **FR-03** | Aperçu en temps réel (PDF §3)      | Chaque frappe / changement de style redessine le canvas sans bouton « Appliquer » ; rendu < 100 ms ; le preview est mis à l'échelle, l'export utilise la **même** fonction de dessin en pleine résolution                                                                                                                                                                | P2 → P3 |
+| **FR-04** | Téléchargement et partage (PDF §4) | Bouton « Télécharger » → PNG (ou JPEG) en résolution native plafonnée à 1600 px, nom `meme-AAAA-MM-JJ-HHmm.png` ; bouton « Partager » → Web Share API avec fichier quand disponible, sinon repli : copie dans le presse-papiers → intents réseaux sociaux (lien du site + texte) → téléchargement + consigne ; un texte court explique la limite du partage sans backend | P4      |
+| **FR-05** | Galerie (PDF §5)                   | Grille des mèmes du plus récent au plus ancien : miniature, titre, date ; actions *voir / télécharger / ré-éditer / supprimer* (avec confirmation) ; **les mèmes sont toujours présents après F5 et après fermeture/réouverture de l'onglet** ; état vide avec appel à l'action                                                                                          | P5      |
+| **FR-06** | Ergonomie transverse (ajout)       | Responsive desktop/mobile ; états vide / chargement / erreur ; labels accessibles, navigation clavier, `alt` sur les miniatures ; aucune donnée externe chargée                                                                                                                                                                                                          | P1 → P6 |
 
 ### 1.6 Décision délicate : « partager sur les réseaux sociaux » sans backend
 
@@ -105,28 +92,28 @@ Le PDF demande le partage, mais une application 100 % Frontend ne peut **pas** p
 
 ### 1.7 Exigences non fonctionnelles (NFR)
 
-| ID | Exigence | Mesure |
-|---|---|---|
-| **NFR-01** | Performance | Dessin via `requestAnimationFrame`, aucune re-compression inutile à chaque frappe |
-| **NFR-02** | Budget de stockage | ~5 Mo/origine en LocalStorage → **≤ 150–200 Ko par mème**, alerte dès 80 % du quota, `QuotaExceededError` géré sans crash |
-| **NFR-03** | Confidentialité | Tout reste dans le navigateur ; aucun appel réseau métier ; mention visible « Vos images ne quittent pas votre appareil » |
-| **NFR-04** | Sécurité | Pas de `dangerouslySetInnerHTML`, validation du type MIME, pas d'image distante (Canvas non « tainted » → export toujours possible) |
-| **NFR-05** | Simplicité | ≤ 2 dépendances runtime (`react`, `react-dom`), Vite en dev uniquement, CSS vanilla, fonctions pures isolées |
-| **NFR-06** | Résilience | Vider le cache du navigateur efface la galerie → message d'avertissement + (bonus P5) export/import de la galerie en JSON |
-| **NFR-07** | Traçabilité | Chaque exigence du PDF ↔ une FR ↔ une phase ↔ un test de recette (§5) |
+| ID         | Exigence           | Mesure                                                                                                                              |
+| ---------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **NFR-01** | Performance        | Dessin via `requestAnimationFrame`, aucune re-compression inutile à chaque frappe                                                   |
+| **NFR-02** | Budget de stockage | ~5 Mo/origine en LocalStorage → **≤ 150–200 Ko par mème**, alerte dès 80 % du quota, `QuotaExceededError` géré sans crash           |
+| **NFR-03** | Confidentialité    | Tout reste dans le navigateur ; aucun appel réseau métier ; mention visible « Vos images ne quittent pas votre appareil »           |
+| **NFR-04** | Sécurité           | Pas de `dangerouslySetInnerHTML`, validation du type MIME, pas d'image distante (Canvas non « tainted » → export toujours possible) |
+| **NFR-05** | Simplicité         | ≤ 2 dépendances runtime (`react`, `react-dom`), Vite en dev uniquement, CSS vanilla, fonctions pures isolées                        |
+| **NFR-06** | Résilience         | Vider le cache du navigateur efface la galerie → message d'avertissement + (bonus P5) export/import de la galerie en JSON           |
+| **NFR-07** | Traçabilité        | Chaque exigence du PDF ↔ une FR ↔ une phase ↔ un test de recette (§5)                                                               |
 
 ### 1.8 Décision technique : **LocalStorage retenu, avec garde-fous**
 
 Question posée : « IndexedDB ou LocalStorage ? » → **Oui au LocalStorage pour ce mini-projet, mais pas naïvement.**
 
-| Critère | LocalStorage | IndexedDB |
-|---|---|---|
-| Simplicité / explicabilité | Élevée : 2 lignes de code | Moyenne : wrapper async, transactions, `onsuccess`, versioning |
-| Données stockées | **string uniquement** (base64 = +33 % de volume) | `Blob` / `File` natifs, binaires |
-| Quota | **~5 Mo par origine** | plusieurs centaines de Mo |
-| Accès | synchrone (bloquant) | asynchrone |
-| Persistance après F5 | Oui | Oui |
-| Adapté à un devoir à expliquer | Oui | Plus lourd à justifier |
+| Critère                        | LocalStorage                                     | IndexedDB                                                      |
+| ------------------------------ | ------------------------------------------------ | -------------------------------------------------------------- |
+| Simplicité / explicabilité     | Élevée : 2 lignes de code                        | Moyenne : wrapper async, transactions, `onsuccess`, versioning |
+| Données stockées               | **string uniquement** (base64 = +33 % de volume) | `Blob` / `File` natifs, binaires                               |
+| Quota                          | **~5 Mo par origine**                            | plusieurs centaines de Mo                                      |
+| Accès                          | synchrone (bloquant)                             | asynchrone                                                     |
+| Persistance après F5           | Oui                                              | Oui                                                            |
+| Adapté à un devoir à expliquer | Oui                                              | Plus lourd à justifier                                         |
 
 **Le risque réel** : une photo de téléphone (2–4 Mo) convertie en DataURL remplit le quota au bout de 2 mèmes. La galerie « marche » en démo puis casse silencieusement.
 
@@ -149,7 +136,6 @@ Question posée : « IndexedDB ou LocalStorage ? » → **Oui au LocalStorage po
 - [ ] Aucune erreur bloquante dans la console, aucun appel réseau métier.
 - [ ] `README.md` : lancement, architecture, limites connues, explication du code.
 - [ ] Je peux expliquer en 3 minutes : le rendu Canvas, la persistance, et la limite du partage.
-- [ ] L'email à Reda contient le lien (§7).
 
 ---
 
@@ -166,11 +152,12 @@ Objectif : une interface simple, moderne et professionnelle, sans effet démonst
 - L'image d'exemple est un aplat neutre généré localement (horizon + disque), pas un visuel décoratif coloré.
 - Accessibilité conservée : labels, focus visible, navigation clavier, `alt`/`aria-label`, contrastes lisibles.
 
+
 ## 2. Architecture prévue
 
 ### 2.1 Stack
 
-**Vite + React (JavaScript / JSX) + HTML Canvas + CSS vanilla + LocalStorage.**
+**Vite + React (JavaScript / JSX) + HTML Canvas + CSS vanilla + LocalStorage.**  
 Pas de TypeScript, pas de librairie UI, pas de router : deux vues gérées par un simple état dans `App.jsx`. Objectif : le minimum de « magie » à expliquer.
 
 ### 2.2 Arborescence
@@ -278,7 +265,7 @@ Chaque phase se termine par un état **démontrable**. Aucune phase ne commence 
 
 ### Phase 5 — Galerie persistante *(FR-05 + NFR-02/03/06)*
 
-- **Objectif** : le point de vigilance de ChatGPT, traité proprement.
+- **Objectif** : une galerie qui survit au rechargement de la page et à la fermeture de l'onglet.
 - **Tâches** : `storage.js` (clé `meme-gallery:v1`, schéma versionné, `load/save/remove`), compression 1280 px / JPEG 0,78 avant sauvegarde, bouton « Enregistrer dans la galerie », grille + tri, voir / télécharger / ré-éditer (recharge l'état dans l'éditeur) / supprimer avec confirmation, suivi du quota avec alerte à 80 % et `try/catch QuotaExceededError`, état vide avec CTA, avertissement « vider le cache efface la galerie ». **Bonus** : export/import JSON de la galerie.
 - **Livrable** : galerie persistante et robuste.
 - **Done when** : je crée 3 mèmes → **F5** → les 3 sont là ; je ferme l'onglet → je reviens → ils sont là ; je supprime → confirmation → disparition ; quota simulé → message propre, application pas cassée.
@@ -293,34 +280,34 @@ Chaque phase se termine par un état **démontrable**. Aucune phase ne commence 
 
 ### Phase 7 — Déploiement et livraison du lien
 
-- **Objectif** : l'email à Reda.
-- **Tâches** : build de prod, déploiement (choix §4.2), test de l'URL publique **en navigation privée et sur téléphone**, vérification HTTPS (indispensable pour le partage), contrôle que la galerie fonctionne bien sur le domaine final (le stockage est lié à l'origine !), rédaction de l'email (§7).
-- **Livrable** : **URL publique + email prêt à envoyer**.
+- **Objectif** : une URL publique accessible hors de la machine de développement.
+- **Tâches** : build de prod, déploiement (choix §4.2), test de l'URL publique **en navigation privée et sur téléphone**, vérification HTTPS (indispensable pour le partage), contrôle que la galerie fonctionne bien sur le domaine final (le stockage est lié à l'origine !).
+- **Livrable** : une URL publique testée.
 - **Done when** : l'URL ouverte depuis un autre appareil affiche l'app et permet de créer + retrouver un mème.
 
 ---
 
 ## 4. Décisions à trancher avant la Phase 1
 
-| # | Décision | Recommandation | Pourquoi |
-|---|---|---|---|
-| 4.1 | Stockage | **LocalStorage + les 5 garde-fous du §1.8** | Simple, explicable, suffisant ; `storage.js` garde la porte ouverte à IndexedDB |
-| 4.2 | Déploiement | **Lien public hébergé direct (immédiat, sans compte)** ou **Vercel** (si compte GitHub dispo) | L'objectif est juste un lien dans un email ; Vercel ajoute une étape compte/repo mais donne une URL plus « professionnelle » |
-| 4.3 | Langage | **JavaScript (JSX)**, pas TypeScript | Moins de concepts à expliquer, sujet déjà dense |
-| 4.4 | Ré-édition depuis la galerie | **Oui** | Quasi gratuit grâce aux métadonnées de texte, et valorisable en soutenance |
+| #   | Décision                     | Recommandation                                                                                | Pourquoi                                                                                                          |
+| --- | ---------------------------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| 4.1 | Stockage                     | **LocalStorage + les 5 garde-fous du §1.8**                                                   | Simple, explicable, suffisant ; `storage.js` garde la porte ouverte à IndexedDB                                   |
+| 4.2 | Déploiement                  | **Lien public hébergé direct (immédiat, sans compte)** ou **Vercel** (si compte GitHub dispo) | L'objectif est une URL publique ; Vercel ajoute une étape compte/repo mais donne une URL plus « professionnelle » |
+| 4.3 | Langage                      | **JavaScript (JSX)**, pas TypeScript                                                          | Moins de concepts à expliquer, sujet déjà dense                                                                   |
+| 4.4 | Ré-édition depuis la galerie | **Oui**                                                                                       | Quasi gratuit grâce aux métadonnées de texte, et valorisable en soutenance                                        |
 
 ---
 
 ## 5. Matrice de traçabilité & checklist de recette
 
-| Exigence PDF | FR | Phase | Test de recette |
-|---|---|---|---|
-| Téléchargement d'images | FR-01 | P2 | Importer JPG, PNG, WebP → OK ; importer un `.pdf` → message d'erreur |
-| Ajout de texte | FR-02 | P3 | 2 blocs minimum, styles différents, texte long ne déborde pas |
-| Aperçu en temps réel | FR-03 | P2/P3 | Frappe au clavier → canvas mis à jour immédiatement |
-| Téléchargement et partage | FR-04 | P4 | PNG valide + partage natif mobile + repli desktop |
-| Galerie | FR-05 | P5 | 3 mèmes → F5 → toujours présents |
-| (Note du PDF) Propriété intellectuelle | §1.7 | P6 | README + footer : images fournies par l'utilisateur, aucun asset tiers |
+| Exigence PDF                           | FR    | Phase | Test de recette                                                        |
+| -------------------------------------- | ----- | ----- | ---------------------------------------------------------------------- |
+| Téléchargement d'images                | FR-01 | P2    | Importer JPG, PNG, WebP → OK ; importer un `.pdf` → message d'erreur   |
+| Ajout de texte                         | FR-02 | P3    | 2 blocs minimum, styles différents, texte long ne déborde pas          |
+| Aperçu en temps réel                   | FR-03 | P2/P3 | Frappe au clavier → canvas mis à jour immédiatement                    |
+| Téléchargement et partage              | FR-04 | P4    | PNG valide + partage natif mobile + repli desktop                      |
+| Galerie                                | FR-05 | P5    | 3 mèmes → F5 → toujours présents                                       |
+| (Note du PDF) Propriété intellectuelle | §1.7  | P6    | README + footer : images fournies par l'utilisateur, aucun asset tiers |
 
 **Checklist transverse** : responsive, navigation clavier, pas d'erreur console, aucun appel réseau métier, quota géré, build OK, URL testée hors de la machine.
 
@@ -328,62 +315,45 @@ Chaque phase se termine par un état **démontrable**. Aucune phase ne commence 
 
 ## 6. Risques et mitigations
 
-| Risque | Impact | Mitigation |
-|---|---|---|
-| Quota LocalStorage (~5 Mo) saturé | Galerie muette / plantage | Compression 1280 px + JPEG 0,78, suivi du quota, message actionnable, éviction ou migration IndexedDB (P4-bis) |
-| Partage social impossible sans backend | Exigence PDF « partagée » incomplète | Web Share API + replis documentés, explication en soutenance (§1.6) |
-| Canvas « tainted » par une image distante | Export impossible | Interdire les URL externes, uniquement des `File` locaux |
-| L'utilisateur vide son cache | Perte des mèmes | Avertissement + export/import JSON (bonus P5) |
-| Stockage lié à l'origine (localhost ≠ domaine final) | Galerie « vide » après déploiement | Tester sur l'URL finale en P7, ne pas promettre de migration localhost → prod |
-| Code trop « magique » à expliquer | Pénalité à l'oral | Peu de dépendances, `drawMeme` pure, `storage.js` isolé, README FAQ |
-| Note de propriété intellectuelle du sujet | Conformité | Aucun template/image tiers embarqué, crédit du sujet, mention dans le README |
+| Risque                                               | Impact                               | Mitigation                                                                                                     |
+| ---------------------------------------------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
+| Quota LocalStorage (~5 Mo) saturé                    | Galerie muette / plantage            | Compression 1280 px + JPEG 0,78, suivi du quota, message actionnable, éviction ou migration IndexedDB (P4-bis) |
+| Partage social impossible sans backend               | Exigence PDF « partagée » incomplète | Web Share API + replis documentés, explication en soutenance (§1.6)                                            |
+| Canvas « tainted » par une image distante            | Export impossible                    | Interdire les URL externes, uniquement des `File` locaux                                                       |
+| L'utilisateur vide son cache                         | Perte des mèmes                      | Avertissement + export/import JSON (bonus P5)                                                                  |
+| Stockage lié à l'origine (localhost ≠ domaine final) | Galerie « vide » après déploiement   | Tester sur l'URL finale en P7, ne pas promettre de migration localhost → prod                                  |
+| Code trop « magique » à expliquer                    | Pénalité à l'oral                    | Peu de dépendances, `drawMeme` pure, `storage.js` isolé, README FAQ                                            |
+| Note de propriété intellectuelle du sujet            | Conformité                           | Aucun template/image tiers embarqué, crédit du sujet, mention dans le README                                   |
+
 
 ---
 
-## 7. Modèle d'email à Reda (à compléter en Phase 7)
-
-**Objet :** Mini-projet d'admission — Générateur de mèmes — lien du site
-
-> Bonjour Reda,
->
-> Vous trouverez ci-dessous le lien du mini-projet « Générateur de mèmes » :
-> **[URL_PUBLIQUE_A_COMPLETER]**
->
-> L'application permet d'importer une image, d'ajouter et de personnaliser du texte avec un aperçu en temps réel, de télécharger ou partager le mème, et de retrouver les créations dans une galerie persistante.
-> Réalisée en React + HTML Canvas, 100 % côté navigateur : aucune image n'est envoyée sur un serveur, les mèmes sont conservés localement (LocalStorage).
->
-> Le code source et les notes techniques (architecture, limites connues) sont disponibles avec le projet.
-> N'hésitez pas si vous souhaitez une démonstration ou des précisions.
->
-> Cordialement,
-> [Prénom Nom]
-
----
-
-## 8. Règle de fonctionnement
+## 7. Règle de fonctionnement
 
 On avance **phase par phase**, dans l'ordre. À la fin de chaque phase : démo courte + validation, puis on passe à la suivante. Toute modification du périmètre (ajout d'une fonctionnalité, changement de stack) est d'abord notée ici avant d'être codée.
 
 ### Journal des décisions
 
-| Date | Changement | Raison |
-|---|---|---|
-| 13/11/2026 | v1.0 — rédaction du PRD et des 8 phases | Cadrage demandé avant tout code |
-| 13/11/2026 | v1.1 — stockage du **fond + calques** au lieu du mème aplati ; `fontSize` relatif ; miniatures générées à la volée | Éviter le texte dupliqué à la ré-édition, garder une seule fonction de rendu, économiser le quota |
-| 13/11/2026 | Décisions §4 validées par défaut au démarrage : **LocalStorage + garde-fous**, **JavaScript**, **ré-édition = oui**, **déploiement = lien public hébergé direct** | L'utilisateur a demandé de démarrer sans attendre |
-| 13/11/2026 | v1.2 — refonte UI/UX : thème clair sobre, copy au vouvoiement, suppression des emojis et effets décoratifs, image d'exemple neutre, commentaires allégés (charte §1.10) | Demande d'une interface simple, moderne et professionnelle |
-| 13/11/2026 | v1.3 — retrait du sous-titre « SUPINFO — Mini-projet d'admission… » de l'en-tête et de la mention dans le titre de l'onglet ; le contexte reste dans les documents | Demande de l'utilisateur : information inutile dans l'interface |
-| 13/11/2026 | v1.4 — ajout de commentaires au format Google docstring (`Args` / `Returns` / `Raises` / `Props` / `Notes`) dans `src/` et d'un parcours de relecture dans le README §3 ; harmonisation des messages de quota au vouvoiement | L'utilisateur veut pouvoir relire et expliquer le code après une longue interruption |
+| Date       | Changement                                                                                                                                                                                                                   | Raison                                                                                                                                                  |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 13/11/2026 | v1.0 — rédaction du PRD et des 8 phases                                                                                                                                                                                      | Cadrage demandé avant tout code                                                                                                                         |
+| 13/11/2026 | v1.1 — stockage du **fond + calques** au lieu du mème aplati ; `fontSize` relatif ; miniatures générées à la volée                                                                                                           | Éviter le texte dupliqué à la ré-édition, garder une seule fonction de rendu, économiser le quota                                                       |
+| 13/11/2026 | Décisions §4 validées par défaut au démarrage : **LocalStorage + garde-fous**, **JavaScript**, **ré-édition = oui**, **déploiement = lien public hébergé direct**                                                            | L'utilisateur a demandé de démarrer sans attendre                                                                                                       |
+| 13/11/2026 | v1.2 — refonte UI/UX : thème clair sobre, copy au vouvoiement, suppression des emojis et effets décoratifs, image d'exemple neutre, commentaires allégés (charte §1.10)                                                      | Demande d'une interface simple, moderne et professionnelle                                                                                              |
+| 13/11/2026 | v1.3 — simplification de l'en-tête et du titre de l'onglet                                                                                                                                                                   | Demande de l'utilisateur : information inutile dans l'interface                                                                                         |
+| 13/11/2026 | v1.4 — ajout de commentaires au format Google docstring (`Args` / `Returns` / `Raises` / `Props` / `Notes`) dans `src/` et d'un parcours de relecture dans le README §3 ; harmonisation des messages de quota au vouvoiement | L'utilisateur veut pouvoir relire et expliquer le code après une longue interruption                                                                    |
+| 14/11/2026 | v1.5 — déploiement Vercel réalisé par l'utilisateur : URL publique renseignée ; recette effectuée sur le domaine public (HTTPS, canvas, LocalStorage, persistance après rechargement, 0 erreur console)                      | Le suffixe `-rouge` est ajouté par Vercel car `generateur-de-memes.vercel.app` appartient à un autre compte ; le nom court n'est donc pas revendiquable |
+| 14/11/2026 | v1.6 — retrait des sections de contexte externe et des mentions nominatives dans les documents ; PRD, phases, checklist et recette conservés                                                                                 | Demande de l'utilisateur : recentrer le cadrage sur le produit                                                                                          |
 
 ### Avancement
 
-| Phase | Statut | Résultat |
-|---|---|---|
-| P0 Cadrage | Terminé | SPEC.md v1.1, décisions actées |
-| P1 Socle | Terminé | Vite + React (JSX), 2 vues, CSS responsive |
-| P2 Import + Canvas | Terminé | FR-01 / FR-03, `drawMeme` unique, drag des textes |
-| P3 Texte | Terminé | FR-02, blocs illimités + styles |
-| P4 Export / partage | Terminé | FR-04, PNG/JPG, Web Share + 3 replis |
-| P5 Galerie | Terminé | FR-05, persistance, quota, export/import JSON, ré-édition fidèle |
-| P6 Finition | Terminé | README, accessibilité, `npm run build` OK, recette navigateur réussie |
-| P7 Déploiement | En attente | En attente de l'accord explicite de publication ; `dist/` prêt à être publié |
+| Phase               | Statut  | Résultat                                                                                         |
+| ------------------- | ------- | ------------------------------------------------------------------------------------------------ |
+| P0 Cadrage          | Terminé | SPEC.md v1.1, décisions actées                                                                   |
+| P1 Socle            | Terminé | Vite + React (JSX), 2 vues, CSS responsive                                                       |
+| P2 Import + Canvas  | Terminé | FR-01 / FR-03, `drawMeme` unique, drag des textes                                                |
+| P3 Texte            | Terminé | FR-02, blocs illimités + styles                                                                  |
+| P4 Export / partage | Terminé | FR-04, PNG/JPG, Web Share + 3 replis                                                             |
+| P5 Galerie          | Terminé | FR-05, persistance, quota, export/import JSON, ré-édition fidèle                                 |
+| P6 Finition         | Terminé | README, accessibilité, `npm run build` OK, recette navigateur réussie                            |
+| P7 Déploiement      | Terminé | URL publique Vercel en HTTPS, assets JS/CSS servis en 200, galerie vérifiée sur le domaine final |

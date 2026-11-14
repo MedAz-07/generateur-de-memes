@@ -1,21 +1,20 @@
 # Générateur de mèmes
 
-Mini-projet d'admission B.Eng.3 / M.Eng.1 — SUPINFO.
 Application web sans serveur : on importe une image, on ajoute du texte, on voit le résultat en direct, on télécharge ou partage, et on retrouve ses créations dans une galerie persistante.
 
-> Lien public du site : à compléter après déploiement (voir `SPEC.md` §7).
+> Lien public du site : [https://generateur-de-memes-1.vercel.app/](https://generateur-de-memes-rouge.vercel.app/)
 
 ---
 
 ## 1. Fonctionnalités (correspondance avec le sujet)
 
-| Exigence du PDF | Implémentation |
-|---|---|
-| Téléchargement d'images | Sélecteur de fichier + glisser-déposer, JPG / PNG / WebP, 10 Mo max, validation avec message d'erreur clair. Une image d'exemple générée localement permet d'essayer sans fichier. |
-| Ajout de texte | Blocs de texte illimités : contenu multiligne, police, taille, couleur, contour (couleur + épaisseur), gras, majuscules, alignement, et déplacement par glisser-déposer sur le canvas. |
-| Aperçu en temps réel | Le canvas est redessiné à chaque modification, sans bouton « Appliquer ». |
-| Téléchargement et partage | Export PNG ou JPG en pleine résolution ; partage via Web Share API (fichier) avec replis presse-papiers / liens de réseaux sociaux / téléchargement. |
-| Galerie | Grille des mèmes, aperçu grand format, téléchargement, **ré-édition**, suppression avec confirmation, tri du plus récent au plus ancien. Persiste après F5 et après fermeture de l'onglet. |
+| Exigence du PDF           | Implémentation                                                                                                                                                                             |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Téléchargement d'images   | Sélecteur de fichier + glisser-déposer, JPG / PNG / WebP, 10 Mo max, validation avec message d'erreur clair. Une image d'exemple générée localement permet d'essayer sans fichier.         |
+| Ajout de texte            | Blocs de texte illimités : contenu multiligne, police, taille, couleur, contour (couleur + épaisseur), gras, majuscules, alignement, et déplacement par glisser-déposer sur le canvas.     |
+| Aperçu en temps réel      | Le canvas est redessiné à chaque modification, sans bouton « Appliquer ».                                                                                                                  |
+| Téléchargement et partage | Export PNG ou JPG en pleine résolution ; partage via Web Share API (fichier) avec replis presse-papiers / liens de réseaux sociaux / téléchargement.                                       |
+| Galerie                   | Grille des mèmes, aperçu grand format, téléchargement, **ré-édition**, suppression avec confirmation, tri du plus récent au plus ancien. Persiste après F5 et après fermeture de l'onglet. |
 
 Extras : barre de suivi du quota, export/import de la galerie en JSON, interface responsive, états vides et d'erreur, accessibilité clavier.
 
@@ -23,7 +22,7 @@ Extras : barre de suivi du quota, export/import de la galerie en JSON, interface
 
 ## 2. Stack et lancement
 
-**Vite + React (JavaScript / JSX) + HTML Canvas + CSS vanilla + LocalStorage.**
+**Vite + React (JavaScript / JSX) + HTML Canvas + CSS vanilla + LocalStorage.**  
 Deux dépendances runtime (`react`, `react-dom`) : le code reste court et lisible. L'interface utilise une palette neutre, des bordures fines et aucun effet décoratif.
 
 ```bash
@@ -144,29 +143,30 @@ Une application 100 % Frontend ne peut **pas** publier une image sur le compte d
 
 ## 7. FAQ de soutenance
 
-**Q. Pourquoi LocalStorage et pas IndexedDB ?**
+**Q. Pourquoi LocalStorage et pas IndexedDB ?**  
 Pour la simplicité et parce que le code doit être explicable : 2 lignes de code, synchrone, sérialisable. IndexedDB est plus robuste (Blob, gros quota) mais ajoute transactions / callbacks / versioning. Les garde-fous (compression, quota, module isolé) rendent LocalStorage suffisant ici, et `storage.js` garde la porte ouverte à une migration.
 
-**Q. Comment fonctionne l'aperçu en temps réel ?**
+**Q. Comment fonctionne l'aperçu en temps réel ?**  
 L'état React est la source de vérité. Chaque frappe met à jour `meme.texts`, ce qui redéclenche l'effet de `MemeCanvas`, qui appelle `drawMeme()` dans un `requestAnimationFrame`. Aucune validation manuelle, aucun double rendu.
 
-**Q. Comment la galerie survit-elle au refresh ?**
+**Q. Comment la galerie survit-elle au refresh ?**  
 À l'enregistrement, le fond est compressé puis sérialisé avec les calques dans `localStorage`. Au démarrage, `loadGallery()` relit la clé. Les miniatures sont recalculées depuis ces données.
 
-**Q. Pourquoi stocker le fond et pas l'image finale ?**
+**Q. Pourquoi stocker le fond et pas l'image finale ?**  
 Pour pouvoir ré-éditer sans superposer du texte déjà « cuit » dans l'image (voir §4).
 
-**Q. Où sont les données personnelles ?**
+**Q. Où sont les données personnelles ?**  
 Nulle part ailleurs que dans le navigateur de l'utilisateur : aucun appel réseau métier, aucun cookie, aucun analytics.
 
-**Q. D'où vient l'image d'exemple ?**
+**Q. D'où vient l'image d'exemple ?**  
 Elle est dessinée à la volée sur un canvas (`makeSampleImage()`), sans aucun asset tiers : aucun problème de propriété intellectuelle, aucun CORS.
 
 ---
 
 ## 8. Propriété intellectuelle
 
-Conformément à la note du sujet, aucun visuel, template ou police tiers n'est embarqué. Les images sont **fournies par l'utilisateur** ou **générées localement**. Le code et l'interface ont été réalisés pour ce mini-projet ; le sujet reste la propriété de SUPINFO.
+
+Aucun visuel, template ou police tiers n'est embarqué. Les images sont **fournies par l'utilisateur** ou **générées localement**. Le code et l'interface ont été réalisés pour ce projet ; aucun document source ni visuel protégé n'est reproduit.
 
 ---
 
@@ -180,4 +180,4 @@ npm run build     # aucune erreur
 
 ---
 
-*Document de cadrage : `SPEC.md` (PRD, 8 phases, matrice de traçabilité, risques, modèle d'email).*
+*Document de cadrage : `SPEC.md` (PRD, 8 phases, matrice de traçabilité, risques).*
